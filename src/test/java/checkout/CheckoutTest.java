@@ -9,7 +9,7 @@ class CheckoutTest {
 
     @Test
     void shouldApplyOnly10PercentDiscount() {
-        BigDecimal expectedFinalPrice = new BigDecimal("24.70");
+        BigDecimal expectedFinalPrice = new BigDecimal("24.69");
         String bookListPath = "checkout/book-list-1.json";
         Checkout checkout = new Checkout(bookListPath);
 

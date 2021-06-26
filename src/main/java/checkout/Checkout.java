@@ -92,9 +92,9 @@ public class Checkout {
     }
 
     private void roundPriceDecimals() {
-        finalPrice = finalPrice.setScale(PRICE_SCALE, RoundingMode.HALF_EVEN);
-        totalDiscount = totalDiscount.setScale(PRICE_SCALE, RoundingMode.HALF_EVEN);
-        totalPrice = totalPrice.setScale(PRICE_SCALE, RoundingMode.HALF_EVEN);
+        finalPrice = finalPrice.setScale(PRICE_SCALE, RoundingMode.DOWN);
+        totalDiscount = totalDiscount.setScale(PRICE_SCALE, RoundingMode.DOWN);
+        totalPrice = totalPrice.setScale(PRICE_SCALE, RoundingMode.DOWN);
     }
 
     private BigDecimal getDiscountedValue(BigDecimal price, Integer quantity, BigDecimal percentage) {
