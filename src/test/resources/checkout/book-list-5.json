@@ -1,0 +1,30 @@
+[
+  {
+    "book": {
+      "title": "The Terrible Privacy of Maxwell Sim",
+      "price": "13.14",
+      "year": 2010
+    }
+  },
+  {
+    "book": {
+      "title": "Three Men in a Boat",
+      "price": "12.87",
+      "year": 1889
+    }
+  },
+  {
+    "book": {
+      "title": "Great Expectations",
+      "price": "13.21",
+      "year": 1861
+    }
+  },
+  {
+    "book": {
+      "title": "Still Life With Woodpecker",
+      "price": "11.05",
+      "year": 1980
+    }
+  }
+]
