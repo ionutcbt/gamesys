@@ -54,4 +54,16 @@ class CheckoutTest {
 
         Assertions.assertTrue(expectedFinalPrice.compareTo(actualFinalPrice) == 0, "Actual final price is different than expected one.");
     }
+
+    @Test
+    void shouldApplyBothDiscountsWhenLoadingAllBooks() {
+        BigDecimal expectedFinalPrice = new BigDecimal("99.27");
+        String bookListPath = "checkout/book-list-5.json";
+        Checkout checkout = new Checkout(bookListPath);
+
+        checkout.applyDiscount();
+        BigDecimal actualFinalPrice = checkout.getFinalPrice();
+
+        Assertions.assertTrue(expectedFinalPrice.compareTo(actualFinalPrice) == 0, "Actual final price is different than expected one.");
+    }
 }

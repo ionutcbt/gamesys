@@ -1,9 +1,30 @@
 [
   {
     "book": {
+      "title": "Moby Dick",
+      "price": "15.20",
+      "year": 1851
+    }
+  },
+  {
+    "book": {
       "title": "The Terrible Privacy of Maxwell Sim",
       "price": "13.14",
       "year": 2010
+    }
+  },
+  {
+    "book": {
+      "title": "Still Life With Woodpecker",
+      "price": "11.05",
+      "year": 1980
+    }
+  },
+  {
+    "book": {
+      "title": "Sleeping Murder",
+      "price": "10.24",
+      "year": 1976
     }
   },
   {
@@ -15,16 +36,37 @@
   },
   {
     "book": {
-      "title": "Great Expectations",
-      "price": "13.21",
-      "year": 1861
+      "title": "The Time Machine",
+      "price": "10.43",
+      "year": 1895
     }
   },
   {
     "book": {
-      "title": "Still Life With Woodpecker",
-      "price": "11.05",
-      "year": 1980
+      "title": "The Caves of Steel",
+      "price": "8.12",
+      "year": 1954
+    }
+  },
+  {
+    "book": {
+      "title": "Idle Thoughts of an Idle Fellow",
+      "price": "7.32",
+      "year": 1886
+    }
+  },
+  {
+    "book": {
+      "title": "A Christmas Carol",
+      "price": "4.23",
+      "year": 1843
+    }
+  },
+  {
+    "book": {
+      "title": "Great Expectations",
+      "price": "13.21",
+      "year": 1861
     }
   }
 ]
