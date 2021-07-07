@@ -1,105 +1,79 @@
 package checkout;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Year;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import book.Book;
+import book.BookListLoader;
 import discount.Discount;
-import discount.PercentageDiscount;
+import discount.DiscountLoader;
 
 public class Checkout {
 
-    private final int PRICE_SCALE = 2;
-    private final int FINAL_PRICE_QUANTITY = 1;
-    private final int REFERENCE_YEAR = 2000;
-    private final BigDecimal discountByYearPercentage = new BigDecimal("0.1");
-    private final BigDecimal discountByTotalPricePercentage = new BigDecimal("0.05");
-    private final BigDecimal totalPriceReference = new BigDecimal("30");
+    private static final int PRICE_SCALE = 2;
+    private static final int FINAL_PRICE_QUANTITY = 1;
 
     private BigDecimal totalPrice = new BigDecimal("0");
     private BigDecimal finalPrice = new BigDecimal("0");
     private BigDecimal totalDiscount = new BigDecimal("0");
-    private Map<Book, Integer> purchasedBooks = new HashMap<>();
+
+    private Map<Book, Integer> purchasedBooks;
+    private List<Discount<Book>> productDiscountList;
+    private Discount<BigDecimal> totalCartDiscount;
+
 
     public Checkout(String cartPath) {
-        loadBookList(cartPath);
+        BookListLoader bookListLoader = new BookListLoader(cartPath);
+        purchasedBooks = bookListLoader.getPurchasedBooks();
+
+        DiscountLoader discountLoader = new DiscountLoader();
+        this.productDiscountList = discountLoader.getProductDiscountList();
+        this.totalCartDiscount = discountLoader.getTotalCartDiscount();
     }
 
-    private void loadBookList(String cartPath) {
-        JSONParser jsonParser = new JSONParser();
-        ClassLoader classLoader = getClass().getClassLoader();
-        try (InputStream inputStream = classLoader.getResourceAsStream(cartPath)) {
-            Reader targetReader = new InputStreamReader(inputStream);
-            Object obj = jsonParser.parse(targetReader);
-            JSONArray bookList = (JSONArray) obj;
-            bookList.forEach( b -> storeBook( (JSONObject) b ) );
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
+    public void processPrice() {
+        calculateTotalPrice();
+        applyDiscounts();
+        setPriceScale();
     }
 
-    private void storeBook(JSONObject bookJson) {
-        JSONObject bookObject = (JSONObject) bookJson.get("book");
-        String title = (String) bookObject.get("title");
-        BigDecimal price = new BigDecimal((String) bookObject.get("price"));
-        Long year = (Long) bookObject.get("year");
-
-        Book book = new Book(title, price, Year.of(year.intValue()));
-
-        if (purchasedBooks.containsKey(book)) {
-            purchasedBooks.put(book, purchasedBooks.get(book) + 1);
-        } else {
-            purchasedBooks.put(book, 1);
-        }
-
+    private void calculateTotalPrice() {
+        totalPrice = purchasedBooks.entrySet().stream()
+                .map(e -> e.getKey().getPrice())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public void applyDiscount() {
-        applyYearTypeDiscount();
-        applyTotalPriceTypeDiscount();
-        roundPriceDecimals();
+    private void applyDiscounts() {
+        applyIndividualDiscounts();
+        applyTotalPriceDiscount();
     }
 
-    private void applyYearTypeDiscount() {
-        purchasedBooks.forEach((book, quantity) -> {
-            totalPrice = totalPrice.add(book.getPrice());
-            if (book.getYear().compareTo(Year.of(REFERENCE_YEAR)) > 0) {
-                BigDecimal discountedValue = getDiscountedValue(book.getPrice(), quantity, discountByYearPercentage);
-                totalDiscount = totalDiscount.add(discountedValue);
-            }
-        });
-    }
-
-    private void applyTotalPriceTypeDiscount() {
-        finalPrice = totalPrice.subtract(totalDiscount);
-        if (finalPrice.compareTo(totalPriceReference) > 0) {
-            BigDecimal discountedValue = getDiscountedValue(finalPrice, FINAL_PRICE_QUANTITY, discountByTotalPricePercentage);
+    private void applyIndividualDiscounts() {
+        for (Discount<Book> discount : productDiscountList) {
+            BigDecimal discountedValue = purchasedBooks.entrySet().stream()
+                    .map(e -> discount.calculateDiscount(e.getKey(), e.getValue()))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
             totalDiscount = totalDiscount.add(discountedValue);
-            finalPrice = totalPrice.subtract(totalDiscount);
         }
+        finalPrice = totalPrice.subtract(totalDiscount);
     }
 
-    private void roundPriceDecimals() {
+    private void applyTotalPriceDiscount() {
+        BigDecimal discountedValue = totalCartDiscount.calculateDiscount(finalPrice, FINAL_PRICE_QUANTITY);
+        totalDiscount = totalDiscount.add(discountedValue);
+        finalPrice = finalPrice.subtract(discountedValue);
+    }
+
+    private void setPriceScale() {
         finalPrice = finalPrice.setScale(PRICE_SCALE, RoundingMode.DOWN);
         totalDiscount = totalDiscount.setScale(PRICE_SCALE, RoundingMode.DOWN);
         totalPrice = totalPrice.setScale(PRICE_SCALE, RoundingMode.DOWN);
     }
 
-    private BigDecimal getDiscountedValue(BigDecimal price, Integer quantity, BigDecimal percentage) {
-        Discount discount = new PercentageDiscount(price, quantity, percentage);
-        return discount.calculate();
+    public BigDecimal getTotalPrice() {
+        return this.totalPrice;
     }
 
     public BigDecimal getTotalDiscount() {
@@ -109,9 +83,4 @@ public class Checkout {
     public BigDecimal getFinalPrice() {
         return this.finalPrice;
     }
-
-    public BigDecimal getTotalPrice() {
-        return this.totalPrice;
-    }
-
 }

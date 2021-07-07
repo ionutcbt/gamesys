@@ -13,10 +13,10 @@ class CheckoutTest {
         String bookListPath = "checkout/book-list-1.json";
         Checkout checkout = new Checkout(bookListPath);
 
-        checkout.applyDiscount();
+        checkout.processPrice();
         BigDecimal actualFinalPrice = checkout.getFinalPrice();
 
-        Assertions.assertTrue(expectedFinalPrice.compareTo(actualFinalPrice) == 0, "Actual final price is different than expected one.");
+        Assertions.assertEquals(expectedFinalPrice, actualFinalPrice, "Expected final price is different than the actual one.");
     }
 
     @Test
@@ -25,10 +25,10 @@ class CheckoutTest {
         String bookListPath = "checkout/book-list-2.json";
         Checkout checkout = new Checkout(bookListPath);
 
-        checkout.applyDiscount();
+        checkout.processPrice();
         BigDecimal actualFinalPrice = checkout.getFinalPrice();
 
-        Assertions.assertTrue(expectedFinalPrice.compareTo(actualFinalPrice) == 0, "Actual final price is different than expected one.");
+        Assertions.assertEquals(expectedFinalPrice, actualFinalPrice, "Expected final price is different than the actual one.");
     }
 
     @Test
@@ -37,10 +37,10 @@ class CheckoutTest {
         String bookListPath = "checkout/book-list-3.json";
         Checkout checkout = new Checkout(bookListPath);
 
-        checkout.applyDiscount();
+        checkout.processPrice();
         BigDecimal actualFinalPrice = checkout.getFinalPrice();
 
-        Assertions.assertTrue(expectedFinalPrice.compareTo(actualFinalPrice) == 0, "Actual final price is different than expected one.");
+        Assertions.assertEquals(expectedFinalPrice, actualFinalPrice, "Expected final price is different than the actual one.");
     }
 
     @Test
@@ -49,10 +49,10 @@ class CheckoutTest {
         String bookListPath = "checkout/book-list-4.json";
         Checkout checkout = new Checkout(bookListPath);
 
-        checkout.applyDiscount();
+        checkout.processPrice();
         BigDecimal actualFinalPrice = checkout.getFinalPrice();
 
-        Assertions.assertTrue(expectedFinalPrice.compareTo(actualFinalPrice) == 0, "Actual final price is different than expected one.");
+        Assertions.assertEquals(expectedFinalPrice, actualFinalPrice, "Expected final price is different than the actual one.");
     }
 
     @Test
@@ -61,9 +61,21 @@ class CheckoutTest {
         String bookListPath = "checkout/book-list-5.json";
         Checkout checkout = new Checkout(bookListPath);
 
-        checkout.applyDiscount();
+        checkout.processPrice();
         BigDecimal actualFinalPrice = checkout.getFinalPrice();
 
-        Assertions.assertTrue(expectedFinalPrice.compareTo(actualFinalPrice) == 0, "Actual final price is different than expected one.");
+        Assertions.assertEquals(expectedFinalPrice, actualFinalPrice, "Expected final price is different than the actual one.");
+    }
+
+    @Test
+    void shouldApplyMultipleIndividualDiscountsWhenBuyingAllBooks() {
+        BigDecimal expectedFinalPrice = new BigDecimal("4836.72");
+        String bookListPath = "checkout/book-list-6.json";
+        Checkout checkout = new Checkout(bookListPath);
+
+        checkout.processPrice();
+        BigDecimal actualFinalPrice = checkout.getFinalPrice();
+
+        Assertions.assertEquals(expectedFinalPrice, actualFinalPrice, "Expected final price is different than the actual one.");
     }
 }

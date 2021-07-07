@@ -9,36 +9,18 @@ public class Book {
     private BigDecimal price;
     private Year year;
 
-    public Book() {}
-
     public Book(String title, BigDecimal price, Year year) {
         this.title = title;
         this.price = price;
         this.year = year;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
     public Year getYear() {
         return year;
-    }
-
-    public void setYear(Year year) {
-        this.year = year;
     }
 
     @Override

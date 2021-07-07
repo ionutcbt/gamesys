@@ -1,19 +1,19 @@
 package discount;
 
 import java.math.BigDecimal;
+import java.util.function.Predicate;
 
-public abstract class Discount {
+public abstract class Discount<T> {
 
-    protected BigDecimal price;
-    protected Integer quantity;
+    private Predicate<T> discountCondition;
 
-    protected Discount() {
+    Discount(Predicate<T> discountCondition) {
+        this.discountCondition = discountCondition;
     }
 
-    public Discount(BigDecimal price, Integer quantity) {
-        this.price = price;
-        this.quantity = quantity;
+    Predicate<T> getDiscountCondition() {
+        return discountCondition;
     }
 
-    public abstract BigDecimal calculate();
+    public abstract BigDecimal calculateDiscount(T productOrPriceParameter, int quantity);
 }
